@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+    <div class="container" style="margin-top: 2%; padding: 2%">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="container">
+                    <img src="https://cdn.shopify.com/s/files/1/0014/9952/9291/products/8187mxnU4fL._UL1500__1_d4e60181-765b-4d8a-bc11-b060e7c4be6c.jpg?v=1549550406"
+                        style="width: 35%" class="main_image">
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <h3><%= result.product.title %></h3>
+                <small class="price">RS. 0</small>
+                <div class="row m-4">
+                    <div class="col-md-6">
+                        <label for="fitType">Fit Type</label>
+                        <select class="form-control" id="fit_type" onchange="filterData()">
+                            <option value="">--Select Fit Type--</option>
+                            <% for(var i = 0; i < options[0].values.length; i++){ %>
+                            <option value="<%= options[0].values[i] %>"><%= options[0].values[i] %></option>
+                            <% } %>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="colorType">Color</label>
+                        <select class="form-control" id="color_type" onchange="filterData()">
+                            <option value="">--Select Color--</option>
+                            <% for(var i = 0; i < options[1].values.length; i++){ %>
+                            <option value="<%= options[1].values[i] %>"><%= options[1].values[i] %></option>
+                            <% } %>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="row m-4">
+                    <div class="col-md-12">
+                        <label for="sizeType">Size</label>
+                        <select class="form-control" id="size_type" onchange="filterData()">
+                            <option value="">--Select Size--</option>
+                            <% for(var i = 0; i < options[2].values.length; i++){ %>
+                            <option value="<%= options[2].values[i] %>"><%= options[2].values[i] %></option>
+                            <% } %>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="row m-4">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary-inverse form-control addtocart"
+                            style="border: 1px solid #337ab7; margin-top: 2%; margin-bottom: 2%">ADD TO CART</button>
+                    </div>
+
+                </div>
+
+                <div class="row m-4">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary form-control buyitnow">BUY IT NOW</button>
+                    </div>
+
+                </div>
+
+                <div class="row m-4">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary-inverse form-control unavailable"
+                            style="border: 1px solid #337ab7; margin-top: 2%; margin-bottom: 2%">UNAVAILABLE</button>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="data" value="<%= JSON.stringify(variants) %>">
+    <input type="hidden" id="images" value="<%= JSON.stringify(image) %>">
+</body>
+<script>
+    $('.unavailable').hide()
+    
+    function filterData() {
+        var data = JSON.parse($('#data').val())
+        var images = JSON.parse($('#images').val())
+        var fitType = $('#fit_type').val();
+        var colorType = $('#color_type').val();
+        var sizeType = $('#size_type').val();
+        data = data.filter(e => {
+            return e.option1 == fitType && e.option2 == colorType && e.option3 == sizeType
+        })
+
+        if (data && Array.isArray(data) && data.length > 0) {
+            images = images.filter(i => {
+                return i.variant_ids.includes(data[0].id)
+            })
+            $('.price').html("Rs " + data[0].price)
+            if (images && Array.isArray(images) && images.length > 0) {
+                $('.main_image').attr('src', images[0].src)
+            }
+            if (fitType && colorType && sizeType) {
+                $('.unavailable').hide()
+                $('.addtocart').show()
+                $('.buyitnow').show()
+            }
+        } else {
+            if (fitType && colorType && sizeType) {
+                $('.unavailable').show()
+                $('.addtocart').hide()
+                $('.buyitnow').hide()
+            }
+        }
+    }
+</script>
+
+</html>
